@@ -127,7 +127,7 @@ namespace AdminRestrictions
 
         void RegisterCommands()
         {
-            const string commandPrefix = "AdminRestrictions";
+            const string commandPrefix = "adminrestrictions";
             ConsoleSystem.Command reloadCfgCommand = new ConsoleSystem.Command()
             {
                 Name = "reloadcfg",
