@@ -14,7 +14,7 @@ namespace AdminRestrictions.Configuration
         [JsonProperty(PropertyName = "Allowed Commands")]
         public string[] allowedCommands;
 
-        [JsonProperty(PropertyName = "Admin Steam Ids")]
+        [JsonProperty(PropertyName = "Steam Ids")]
         public List<ulong> steamIds;
 
         public GroupConfig()
