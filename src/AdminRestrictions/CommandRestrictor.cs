@@ -196,6 +196,12 @@ namespace AdminRestrictions
                     }
                     else
                     {
+                        if (string.IsNullOrWhiteSpace(groupConfig.name))
+                        {
+                            Debug.LogError($"[AdminRestrictions]: Invalid configuration detected: The element at index {i} within the \"Groups\" array in the configuration file contained an empty of missing name");
+                            valid = false;
+                        }
+
                         if (groupConfig.allowedCommands == null)
                         {
                             Debug.LogError($"[AdminRestrictions]: Invalid configuration detected: The element at index {i} within the \"Groups\" array in the configuration file contained a null \"Allowed Commands\" array");
@@ -260,6 +266,7 @@ namespace AdminRestrictions
                 {
                     new GroupConfig
                     {
+                        name = "demo-group-1",
                         allowAll = false,
                         allowedCommands = new string[]
                         {

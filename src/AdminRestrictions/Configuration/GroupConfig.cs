@@ -4,6 +4,9 @@ namespace AdminRestrictions.Configuration
 {
     internal class GroupConfig
     {
+        [JsonProperty(PropertyName = "Group Name")]
+        public string name;
+
         [JsonProperty(PropertyName = "Allow All Commands")]
         public bool allowAll = false;
 
