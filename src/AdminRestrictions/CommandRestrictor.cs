@@ -52,6 +52,7 @@ namespace AdminRestrictions
             {
                 if (string.Equals(_configuration.globallyBlockedCommands[i], arg.cmd.FullName))
                 {
+                    arg.ReplyWith("Permission Denied");
                     LogBlockedCommand(arg);
                     return false;
                 }
@@ -99,6 +100,7 @@ namespace AdminRestrictions
             }
 
             // Default to block all commands
+            arg.ReplyWith("Permission Denied");
             LogBlockedCommand(arg);
             return false;
         }
@@ -109,7 +111,7 @@ namespace AdminRestrictions
             _stringBuilder.Append("["); _stringBuilder.Append(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()); _stringBuilder.Append("] ");
             _stringBuilder.Append("("); _stringBuilder.Append(arg.Connection.userid); _stringBuilder.Append(") \"");
             _stringBuilder.Append(arg.Connection.username);
-            _stringBuilder.Append("\" attempted to execute blocked command \"");
+            _stringBuilder.Append("\" attempted to execute a blocked command \"");
             _stringBuilder.Append(arg.cmd.FullName);
             _stringBuilder.Append("\"");
             _fileLogger.Log(_stringBuilder.ToString());
