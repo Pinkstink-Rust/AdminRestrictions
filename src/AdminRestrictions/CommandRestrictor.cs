@@ -2,6 +2,7 @@
 using Network;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -67,7 +68,7 @@ namespace AdminRestrictions
                 // Check if groupConfig contains the Admins userid
                 var groupConfig = _configuration.groupConfigs[i];
                 var groupContainsPlayer = false;
-                for (int j = 0; j < groupConfig.steamIds.Length; j++)
+                for (int j = 0; j < groupConfig.steamIds.Count; j++)
                 {
                     if (groupConfig.steamIds[j] == steamId)
                     {
@@ -142,11 +143,118 @@ namespace AdminRestrictions
             };
             ConsoleSystem.Index.Server.Dict[commandPrefix + "." + "reloadcfg"] = reloadCfgCommand;
 
-            ConsoleSystem.Command[] allCommands = ConsoleSystem.Index.All.Concat(new ConsoleSystem.Command[] { reloadCfgCommand }).ToArray();
+            ConsoleSystem.Command addAdminToGroupCommand = new ConsoleSystem.Command()
+            {
+                Name = "addadmintogroup",
+                Parent = commandPrefix,
+                FullName = commandPrefix + "." + "addadmintogroup",
+                ServerAdmin = true,
+                Variable = false,
+                Call = new Action<ConsoleSystem.Arg>(AddAdminToGroupCommand)
+            };
+            ConsoleSystem.Index.Server.Dict[commandPrefix + "." + "addadmintogroup"] = addAdminToGroupCommand;
+
+            ConsoleSystem.Command removeAdminFromGroupCommand = new ConsoleSystem.Command()
+            {
+                Name = "removeadminfromgroup",
+                Parent = commandPrefix,
+                FullName = commandPrefix + "." + "removeadminfromgroup",
+                ServerAdmin = true,
+                Variable = false,
+                Call = new Action<ConsoleSystem.Arg>(RemoveAdminFromGroupCommand)
+            };
+            ConsoleSystem.Index.Server.Dict[commandPrefix + "." + "removeadminfromgroup"] = removeAdminFromGroupCommand;
+
+            ConsoleSystem.Command[] allCommands = ConsoleSystem.Index.All.Concat(new ConsoleSystem.Command[] { reloadCfgCommand, addAdminToGroupCommand, removeAdminFromGroupCommand }).ToArray();
             // Would be nice if this had a public setter, or better yet, a register command helper
             typeof(ConsoleSystem.Index)
                 .GetProperty(nameof(ConsoleSystem.Index.All), System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
                 .SetValue(null, allCommands);
+        }
+
+        void AddAdminToGroupCommand(ConsoleSystem.Arg arg)
+        {
+            if (!arg.HasArgs(2))
+            {
+                arg.ReplyWith("[AdminRestrictions]: Invalid syntax: adminrestrictions.addadmintogroup <group name> <admin steam id>");
+                return;
+            }
+
+            var groupName = arg.GetString(0, null);
+            if (string.IsNullOrWhiteSpace(groupName))
+            {
+                arg.ReplyWith("[AdminRestrictions]: Invalid syntax: adminrestrictions.addadmintogroup <group name> <admin steam id>");
+                return;
+            }
+
+            var userId = arg.GetUInt64(1, 0);
+            if (userId == 0)
+            {
+                arg.ReplyWith("[AdminRestrictions]: Invalid syntax: adminrestrictions.addadmintogroup <group name> <admin steam id>");
+                return;
+            }
+
+            for (int i = 0; i < _configuration.groupConfigs.Length; i++)
+            {
+                var configGroup = _configuration.groupConfigs[i];
+                if (!string.Equals(configGroup.name, groupName))
+                    continue;
+
+                if (configGroup.steamIds.Contains(userId))
+                {
+                    arg.ReplyWith($"[AdminRestrictions]: Admin \"{userId}\" is already apart of the group \"{groupName}\"");
+                    return;
+                }
+
+                configGroup.steamIds.Add(userId);
+                arg.ReplyWith($"[AdminRestrictions]: Added admin \"{userId}\" to group \"{groupName}\"");
+                SaveConfiguration();
+                return;
+            }
+
+            arg.ReplyWith($"[AdminRestrictions]: Failed to find group with name \"{groupName}\"");
+        }
+
+        void RemoveAdminFromGroupCommand(ConsoleSystem.Arg arg)
+        {
+            if (!arg.HasArgs(2))
+            {
+                arg.ReplyWith("[AdminRestrictions]: Invalid syntax: adminrestrictions.removeadminfromgroup <group name> <admin steam id>");
+                return;
+            }
+
+            var groupName = arg.GetString(0, null);
+            if (string.IsNullOrWhiteSpace(groupName))
+            {
+                arg.ReplyWith("[AdminRestrictions]: Invalid syntax: adminrestrictions.removeadminfromgroup <group name> <admin steam id>");
+                return;
+            }
+
+            var userId = arg.GetUInt64(1, 0);
+            if (userId == 0)
+            {
+                arg.ReplyWith("[AdminRestrictions]: Invalid syntax: adminrestrictions.removeadminfromgroup <group name> <admin steam id>");
+                return;
+            }
+
+            for (int i = 0; i < _configuration.groupConfigs.Length; i++)
+            {
+                var configGroup = _configuration.groupConfigs[i];
+                if (!string.Equals(configGroup.name, groupName))
+                    continue;
+
+                if (configGroup.steamIds.RemoveAll(x => x == userId) < 1)
+                {
+                    arg.ReplyWith($"[AdminRestrictions]: Admin \"{userId}\" is not apart of the group \"{groupName}\"");
+                    return;
+                }
+
+                arg.ReplyWith($"[AdminRestrictions]: Admin \"{userId}\" remove from group \"{groupName}\"");
+                SaveConfiguration();
+                return;
+            }
+
+            arg.ReplyWith($"[AdminRestrictions]: Failed to find group with name \"{groupName}\"");
         }
 
         void ReloadCfgCommand(ConsoleSystem.Arg arg)
@@ -232,7 +340,7 @@ namespace AdminRestrictions
                             Debug.LogError($"[AdminRestrictions]: Invalid configuration detected: The element at index {i} within the \"Groups\" array in the configuration file contained a null \"Admin Steam Ids\" array");
                             valid = false;
                         }
-                        else if (groupConfig.steamIds.Length < 1)
+                        else if (groupConfig.steamIds.Count < 1)
                         {
                             Debug.LogError($"[AdminRestrictions]: Detected non-performant configuration: The element at index {i} within the \"Groups\" array in the configuration file contained a empty \"Allowed Commands\" array");
                         }
@@ -287,7 +395,7 @@ namespace AdminRestrictions
                         {
                             "global.entid"
                         },
-                        steamIds = new ulong[]
+                        steamIds = new List<ulong>
                         {
                             1234567890
                         }

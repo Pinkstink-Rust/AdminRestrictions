@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace AdminRestrictions.Configuration
 {
@@ -14,12 +15,12 @@ namespace AdminRestrictions.Configuration
         public string[] allowedCommands;
 
         [JsonProperty(PropertyName = "Admin Steam Ids")]
-        public ulong[] steamIds;
+        public List<ulong> steamIds;
 
         public GroupConfig()
         {
             allowedCommands = allowedCommands ?? new string[0];
-            steamIds = steamIds ?? new ulong[0];
+            steamIds = steamIds ?? new List<ulong>();
         }
     }
 }
