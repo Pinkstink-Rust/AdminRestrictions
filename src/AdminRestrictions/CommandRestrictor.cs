@@ -198,7 +198,7 @@ namespace AdminRestrictions
                     {
                         if (string.IsNullOrWhiteSpace(groupConfig.name))
                         {
-                            Debug.LogError($"[AdminRestrictions]: Invalid configuration detected: The element at index {i} within the \"Groups\" array in the configuration file contained an empty of missing name");
+                            Debug.LogError($"[AdminRestrictions]: Invalid configuration detected: The element at index {i} within the \"Groups\" array in the configuration file contained an empty or missing value for \"Group Name\"");
                             valid = false;
                         }
 
