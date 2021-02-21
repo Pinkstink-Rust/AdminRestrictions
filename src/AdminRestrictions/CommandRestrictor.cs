@@ -1,4 +1,5 @@
 ﻿using AdminRestrictions.Configuration;
+using Network;
 using Newtonsoft.Json;
 using System;
 using System.IO;
@@ -52,7 +53,7 @@ namespace AdminRestrictions
             {
                 if (string.Equals(_configuration.globallyBlockedCommands[i], arg.cmd.FullName))
                 {
-                    arg.ReplyWith("Permission Denied");
+                    SendClientReply(arg.Connection, "Permission Denied");
                     LogBlockedCommand(arg);
                     return false;
                 }
@@ -100,7 +101,7 @@ namespace AdminRestrictions
             }
 
             // Default to block all commands
-            arg.ReplyWith("Permission Denied");
+            SendClientReply(arg.Connection, "Permission Denied");
             LogBlockedCommand(arg);
             return false;
         }
@@ -166,6 +167,18 @@ namespace AdminRestrictions
                 OnEnabled();
             }
             arg.ReplyWith("[AdminRestrictions]: Configuration reloaded");
+        }
+
+        static void SendClientReply(Connection cn, string strCommand)
+        {
+            if (!Net.sv.IsConnected())
+            {
+                return;
+            }
+            Net.sv.write.Start();
+            Net.sv.write.PacketID(Message.Type.ConsoleMessage);
+            Net.sv.write.String(strCommand);
+            Net.sv.write.Send(new SendInfo(cn));
         }
 
         bool ValidateConfiguration()
