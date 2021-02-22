@@ -90,7 +90,7 @@ namespace AdminRestrictions
                 // Test if the group config permits the command
                 for (int j = 0; j < groupConfig.allowedCommands.Length; j++)
                 {
-                    if (string.Equals(groupConfig.allowedCommands[i], arg.cmd.FullName))
+                    if (string.Equals(groupConfig.allowedCommands[j], arg.cmd.FullName))
                     {
                         // We found a matching command in the allowed commands list
                         // time to break out of this loop and allow the commands execution
