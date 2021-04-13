@@ -49,13 +49,22 @@ namespace AdminRestrictions
             if (!_ready)
                 return true;
 
+            var allowed = IsCommandPermitted(arg);
+            LogCommand(arg, allowed);
+            return allowed;
+        }
+
+        bool IsCommandPermitted(ConsoleSystem.Arg arg)
+        {
+            if (!_ready)
+                return true;
+
             // Is this command globally blocked?
             for (int i = 0; i < _configuration.globallyBlockedCommands.Length; i++)
             {
                 if (string.Equals(_configuration.globallyBlockedCommands[i], arg.cmd.FullName))
                 {
                     SendClientReply(arg.Connection, "Permission Denied");
-                    LogBlockedCommand(arg);
                     return false;
                 }
             }
@@ -103,19 +112,32 @@ namespace AdminRestrictions
 
             // Default to block all commands
             SendClientReply(arg.Connection, "Permission Denied");
-            LogBlockedCommand(arg);
             return false;
         }
 
-        void LogBlockedCommand(ConsoleSystem.Arg arg)
+        void LogCommand(ConsoleSystem.Arg arg, bool permitted)
         {
+            if (!_configuration.logToFile) return;
+
             _stringBuilder.Clear();
             _stringBuilder.Append("["); _stringBuilder.Append(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()); _stringBuilder.Append("] ");
             _stringBuilder.Append("("); _stringBuilder.Append(arg.Connection.userid); _stringBuilder.Append(") \"");
             _stringBuilder.Append(arg.Connection.username);
-            _stringBuilder.Append("\" attempted to execute a blocked command \"");
+            if (permitted) _stringBuilder.Append("\" executed command \"");
+            else _stringBuilder.Append("\" attempted to execute a blocked command \"");
             _stringBuilder.Append(arg.cmd.FullName);
             _stringBuilder.Append("\"");
+            if (arg.HasArgs())
+            {
+                _stringBuilder.Append(" Args: ");
+                for (int i = 0; i < arg.Args.Length; i++)
+                {
+                    if (i != 0) _stringBuilder.Append(", ");
+                    _stringBuilder.Append("\"");
+                    _stringBuilder.Append(arg.Args[i]);
+                    _stringBuilder.Append("\"");
+                }
+            }
             _fileLogger.Log(_stringBuilder.ToString());
         }
 
