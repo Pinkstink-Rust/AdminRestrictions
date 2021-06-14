@@ -59,6 +59,15 @@ namespace AdminRestrictions
             if (!_ready)
                 return true;
 
+            // Is this command globally allowed?
+            for (int i = 0; i < _configuration.globallyAllowedCommands.Length; i++)
+            {
+                if (string.Equals(_configuration.globallyAllowedCommands[i], arg.cmd.FullName))
+                {
+                    return true;
+                }
+            }
+
             // Is this command globally blocked?
             for (int i = 0; i < _configuration.globallyBlockedCommands.Length; i++)
             {

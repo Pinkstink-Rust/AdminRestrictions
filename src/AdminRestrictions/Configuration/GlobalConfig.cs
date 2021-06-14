@@ -10,6 +10,9 @@ namespace AdminRestrictions.Configuration
         [JsonProperty(PropertyName = "Globally Blocked Commands")]
         public string[] globallyBlockedCommands;
 
+        [JsonProperty(PropertyName = "Globally Allowed Commands")]
+        public string[] globallyAllowedCommands;
+
         [JsonProperty(PropertyName = "Log to file")]
         public bool logToFile = true;
 
@@ -19,6 +22,7 @@ namespace AdminRestrictions.Configuration
         public GlobalConfig()
         {
             globallyBlockedCommands = globallyBlockedCommands ?? new string[0];
+            globallyAllowedCommands = globallyAllowedCommands ?? new string[0];
             groupConfigs = groupConfigs ?? new GroupConfig[0];
         }
     }
