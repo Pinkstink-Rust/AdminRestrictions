@@ -57,20 +57,20 @@ A HarmonyMod for Rust that is capable of globally blocking admin commands or res
 
 This a boilerplate configuration that can be used to get started, It will block all admins on the server from running the commands in `Globally Blocked Commands`, after this it will allow `76561198044364727` to run any command they wish, whilst only allowing `76561198288126363` to run commands necessary for teleporting and locally demo recording (`server.snapshot` is sent by the client automatically when starting a demo record).
 ## Global Explanation
-### `Enabled`
+### Enabled
 If set to true, allow the Mod from imposing the configured command restrictions.
 
-### `Globally Blocked Commands`
+### Globally Blocked Commands
 An array of commands that should always be blocked regardless, this is always process first and will ignore any group specific configuration.
 
-### `Log to file`
+### Log to file
 Logs a message to file everytime an admin attempts to run a command that was blocked, this is useful for finding out what you need to allow.
 
 > E.g. An admin needs to be able to run `server.snapshot` to start a local demo record.
 > 
 > When `server.snapshot` is not allowed and an admin runs `demo.record`, a message will show up in the log file detailing that the admin ran `server.snapshot`, this is because as part of Rust starting a demo recording, it requests an update to date "snapshot" of all entities from the server to ensure it is 100% in sync with the server.
 
-### `Groups`
+### Groups
 An array of restrictions to apply to a group of players, these are processed in the order that they are found in the configuration file, so for this example, if an admin tries to run a command and it's not in `Globally Blocked Commands`, these groups will then next be consulted to determine if the admin can run the command.
 
 The Mod will continue to search all groups until it finds a group that allows the admin to run the command, if it never finds a group that allows the admin to run the command it will block the command.
@@ -95,33 +95,33 @@ The Mod will continue to search all groups until it finds a group that allows th
 }
 ```
 
-### `Group Name`
+### Group Name
 A name to reference the group by in the console commands.
 
 > **NOTE**: This name should be unique and have no spaces, otherwise you will not be able use the console commands to manage it.
 
-### `Allow All Commands`
+### Allow All Commands
 If this is set to true, all commands will be permitted, unless they are on the `Globally Blocked Commands` list.
 
-### `Allowed Commands`
+### Allowed Commands
 An array of commands that admins in this group are permitted to run.
 
-### `Steam Ids`
+### Steam Ids
 The Steam Ids of admins that this group should apply to.
 
 > **TIP**: An admin can be a part of multiple groups
 
 # Commands
-### `adminrestrictions.reloadcfg`
+### adminrestrictions.reloadcfg
 If you have made changes to the config file directly, you can run this console command and it will load the changes.
 
-### `adminrestrictions.addadmintogroup <group name> <admin steam id>`
+### adminrestrictions.addadmintogroup <group name> <admin steam id>
 Use this command to add an admins `Steam Id` to a group.
 
 `adminrestrictions.addadmintogroup allow-all 76561198044364727`
 > **NOTE**: You cannot use this command to add an admin to a group with spaces in it's `Group Name`
 
-### `adminrestrictions.removeadminfromgroup <group name> <admin steam id>`
+### adminrestrictions.removeadminfromgroup <group name> <admin steam id>
 Use this command to remove an admins `Steam Id` from a group.
 
 `adminrestrictions.removeadminfromgroup allow-all 76561198044364727`
