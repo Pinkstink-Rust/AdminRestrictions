@@ -49,6 +49,16 @@ namespace AdminRestrictions
             if (!_ready)
                 return true;
 
+            // If this command can be ran as a normal server user we should allow it.
+            // This check is required as Oxide Mod registers all commands with
+            // ServerAdmin and ServerUser as true. Regardless, if a command has
+            // ServerUser set to true and the arg has a valid Connection is will
+            // be allowed to run by Rusts ConsoleSystem, we can already be sure
+            // that a valid connection is present as an explicit test to check
+            // whether this Arg was ran by Rcon has already been performed by Rust.
+            if (arg.cmd.ServerUser)
+                return true;
+
             var allowed = IsCommandPermitted(arg);
             LogCommand(arg, allowed);
             return allowed;
