@@ -55,7 +55,7 @@ A HarmonyMod for Rust that is capable of globally blocking admin commands or res
 }
 ```
 
-This a boilerplate configuration that can be used to get started, It will block all admins on the server from running the commands in `Globally Blocked Commands`, after this it will allow `76561198044364727` to run any command they wish, whilst only allowing `76561198288126363` to run commands necessary for teleporting and locally demo recording (`server.snapshot` is sent by the client automatically when starting a demo record).
+This is a boilerplate configuration that can be used to get started, it will block all admins on the server from running any command that requires admin permissions unless they are matched in the one of the 2 groups defined, the first group will allow `76561198044364727` to run any command they wish with the exception of the commands listed in `Globally Blocked Commands`, the second group allows `76561198288126363` to run commands necessary for teleporting and locally demo recording (`server.snapshot` is sent by the client automatically when starting a demo record).
 ## Global Explanation
 ### Enabled
 If set to true, allow the Mod from imposing the configured command restrictions.
