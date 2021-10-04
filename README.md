@@ -10,7 +10,7 @@ A HarmonyMod for Rust that is capable of globally blocking admin commands or res
 4. Start your server, **see note below**
 5. Once the server has started and the mod has loaded, setup your groups and globally blocked commands in configuration file located `HarmonyMods_Data/AdminRestrictions/Configuration.json`
 
- > **NOTE**: Never update or delete a HarmonyMod DLL file when the rust server is running, best case scenario if that it doesn't let you, worst case is your server will start throwing random Invalid IL exceptions.
+ > **NOTE**: Never update or delete a HarmonyMod DLL file when the rust server is running, this can lead to your server throwing random Invalid IL exceptions and eventually crash.
 
  # Configuration
  ## Quick Start
