@@ -6,11 +6,11 @@ A HarmonyMod for Rust that is capable of globally blocking admin commands or res
 # Setup
 1. Stop your Rust server, **see note below**
 2. Download the latest version of [AdminRestrictions.dll](https://github.com/Pinkstink-Rust/AdminRestrictions/releases/latest/download/AdminRestrictions.dll) from this projects [latest release](https://github.com/Pinkstink-Rust/AdminRestrictions/releases/latest)
-3. Copy `AdminRestrictions.dll` to the `HarmonyMods` folder inf you rust server directory
+3. Copy `AdminRestrictions.dll` to the `HarmonyMods` folder in your rust server directory
 4. Start your server, **see note below**
 5. Once the server has started and the mod has loaded, setup your groups and globally blocked commands in configuration file located `HarmonyMods_Data/AdminRestrictions/Configuration.json`
 
- > **NOTE**: Never update or delete a HarmonyMod DLL file when the rust server is running, this can lead to your server throwing random Invalid IL exceptions and eventually crash.
+> **NOTE**: Never update or delete a HarmonyMod DLL file when the rust server is running, this can lead to your server throwing random Invalid IL exceptions and eventually crash.
 
  # Configuration
  ## Quick Start
