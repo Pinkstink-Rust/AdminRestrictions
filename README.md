@@ -25,6 +25,14 @@ A HarmonyMod for Rust that is capable of globally blocking admin commands or res
     "global.quit",
     "global.restart"
   ],
+  "Globally Allowed Commands": [
+    "global.teleport",
+    "global.teleport2marker",
+    "global.teleport2player",
+    "global.spectate",
+    "global.teaminfo",
+    "global.teleport2owneditem"
+  ],
   "Log to file": false,
   "Groups": [
     {
@@ -39,12 +47,7 @@ A HarmonyMod for Rust that is capable of globally blocking admin commands or res
       "Group Name": "admins",
       "Allow All Commands": false,
       "Allowed Commands": [
-        "global.teleport",
-        "global.teleport2marker",
-        "global.teleport2player",
-        "global.spectate",
-        "global.teaminfo",
-        "global.teleport2owneditem",
+        "global.serverinfo",
         "server.snapshot"
       ],
       "Steam Ids": [
@@ -55,13 +58,16 @@ A HarmonyMod for Rust that is capable of globally blocking admin commands or res
 }
 ```
 
-This is a boilerplate configuration that can be used to get started, it will block all admins on the server from running any command that requires admin permissions unless they are matched in the one of the 2 groups defined, the first group will allow `76561198044364727` to run any command they wish with the exception of the commands listed in `Globally Blocked Commands`, the second group allows `76561198288126363` to run commands necessary for teleporting and locally demo recording (`server.snapshot` is sent by the client automatically when starting a demo record).
+This is a boilerplate configuration that can be used to get started, it will block all admins on the server from running any command that requires admin permissions unless the command is listed in `Globally Allowed Commands` **OR** they are matched in the one of the 2 groups defined, the first group will allow `76561198044364727` to run any command they wish with the exception of the commands listed in `Globally Blocked Commands`, the second group allows `76561198288126363` to run commands necessary for checking serverinfo and demo recording (`server.snapshot` is sent by the client automatically when starting a demo record).
 ## Global Explanation
 ### Enabled
 If set to true, allow the Mod from imposing the configured command restrictions.
 
 ### Globally Blocked Commands
-An array of commands that should always be blocked regardless, this is always process first and will ignore any group specific configuration.
+An array of commands that should always be blocked regardless, this is always processed first and will ignore any group specific configuration.
+
+### Globally Allowed Commands
+An array of commands that should always be allowed, this is always processed second and will ignore any group specific configuration.
 
 ### Log to file
 Logs a message to file everytime an admin attempts to run a command that was blocked, this is useful for finding out what you need to allow.
@@ -81,12 +87,7 @@ The Mod will continue to search all groups until it finds a group that allows th
   "Group Name": "admins",
   "Allow All Commands": false,
   "Allowed Commands": [
-    "global.teleport",
-    "global.teleport2marker",
-    "global.teleport2player",
-    "global.spectate",
-    "global.teaminfo",
-    "global.teleport2owneditem",
+    "global.serverinfo",
     "server.snapshot"
   ],
   "Steam Ids": [
