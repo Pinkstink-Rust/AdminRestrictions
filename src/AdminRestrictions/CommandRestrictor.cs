@@ -70,7 +70,7 @@ namespace AdminRestrictions
                 return true;
 
             // Is this command globally allowed?
-            for (int i = 0; i < _configuration.globallyAllowedCommands.Length; i++)
+            for (int i = 0; i < _configuration.globallyAllowedCommands.Count; i++)
             {
                 if (string.Equals(_configuration.globallyAllowedCommands[i], arg.cmd.FullName))
                 {
@@ -79,7 +79,7 @@ namespace AdminRestrictions
             }
 
             // Is this command globally blocked?
-            for (int i = 0; i < _configuration.globallyBlockedCommands.Length; i++)
+            for (int i = 0; i < _configuration.globallyBlockedCommands.Count; i++)
             {
                 if (string.Equals(_configuration.globallyBlockedCommands[i], arg.cmd.FullName))
                 {
@@ -182,7 +182,51 @@ namespace AdminRestrictions
                 Variable = false,
                 Call = new Action<ConsoleSystem.Arg>(ReloadCfgCommand)
             };
-            ConsoleSystem.Index.Server.Dict[commandPrefix + "." + "reloadcfg"] = reloadCfgCommand;
+            ConsoleSystem.Index.Server.Dict[reloadCfgCommand.FullName] = reloadCfgCommand;
+
+            ConsoleSystem.Command addGloballyAllowedCommand = new ConsoleSystem.Command()
+            {
+                Name = "addgloballyallowedcommand",
+                Parent = commandPrefix,
+                FullName = commandPrefix + "." + "addgloballyallowedcommand",
+                ServerAdmin = true,
+                Variable = false,
+                Call = new Action<ConsoleSystem.Arg>(AddGloballyAllowedCommand)
+            };
+            ConsoleSystem.Index.Server.Dict[addGloballyAllowedCommand.FullName] = addGloballyAllowedCommand;
+
+            ConsoleSystem.Command removeGloballyAllowedCommand = new ConsoleSystem.Command()
+            {
+                Name = "removegloballyallowedcommand",
+                Parent = commandPrefix,
+                FullName = commandPrefix + "." + "removegloballyallowedcommand",
+                ServerAdmin = true,
+                Variable = false,
+                Call = new Action<ConsoleSystem.Arg>(RemoveGloballyAllowedCommand)
+            };
+            ConsoleSystem.Index.Server.Dict[removeGloballyAllowedCommand.FullName] = removeGloballyAllowedCommand;
+
+            ConsoleSystem.Command addGloballyBlockedCommand = new ConsoleSystem.Command()
+            {
+                Name = "addgloballyblockedcommand",
+                Parent = commandPrefix,
+                FullName = commandPrefix + "." + "addgloballyblockedcommand",
+                ServerAdmin = true,
+                Variable = false,
+                Call = new Action<ConsoleSystem.Arg>(AddGloballyBlockedCommand)
+            };
+            ConsoleSystem.Index.Server.Dict[addGloballyBlockedCommand.FullName] = addGloballyBlockedCommand;
+
+            ConsoleSystem.Command removeGloballyBlockedCommand = new ConsoleSystem.Command()
+            {
+                Name = "removegloballyblockedcommand",
+                Parent = commandPrefix,
+                FullName = commandPrefix + "." + "removegloballyblockedcommand",
+                ServerAdmin = true,
+                Variable = false,
+                Call = new Action<ConsoleSystem.Arg>(RemoveGloballyBlockedCommand)
+            };
+            ConsoleSystem.Index.Server.Dict[removeGloballyBlockedCommand.FullName] = removeGloballyBlockedCommand;
 
             ConsoleSystem.Command addAdminToGroupCommand = new ConsoleSystem.Command()
             {
@@ -193,7 +237,7 @@ namespace AdminRestrictions
                 Variable = false,
                 Call = new Action<ConsoleSystem.Arg>(AddAdminToGroupCommand)
             };
-            ConsoleSystem.Index.Server.Dict[commandPrefix + "." + "addadmintogroup"] = addAdminToGroupCommand;
+            ConsoleSystem.Index.Server.Dict[addAdminToGroupCommand.FullName] = addAdminToGroupCommand;
 
             ConsoleSystem.Command removeAdminFromGroupCommand = new ConsoleSystem.Command()
             {
@@ -204,13 +248,115 @@ namespace AdminRestrictions
                 Variable = false,
                 Call = new Action<ConsoleSystem.Arg>(RemoveAdminFromGroupCommand)
             };
-            ConsoleSystem.Index.Server.Dict[commandPrefix + "." + "removeadminfromgroup"] = removeAdminFromGroupCommand;
+            ConsoleSystem.Index.Server.Dict[removeAdminFromGroupCommand.FullName] = removeAdminFromGroupCommand;
 
             ConsoleSystem.Command[] allCommands = ConsoleSystem.Index.All.Concat(new ConsoleSystem.Command[] { reloadCfgCommand, addAdminToGroupCommand, removeAdminFromGroupCommand }).ToArray();
             // Would be nice if this had a public setter, or better yet, a register command helper
             typeof(ConsoleSystem.Index)
                 .GetProperty(nameof(ConsoleSystem.Index.All), System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
                 .SetValue(null, allCommands);
+        }
+
+        void AddGloballyAllowedCommand(ConsoleSystem.Arg arg)
+        {
+            if (!arg.HasArgs(1))
+            {
+                arg.ReplyWith("[AdminRestrictions]: Invalid syntax: adminrestrictions.addgloballyallowedcommand <command.name> [<command.name>...]");
+                return;
+            }
+
+            int processed = 0;
+            for (int i = 0; i < arg.Args.Length; i++)
+            {
+                var command = arg.Args[i];
+                if (string.IsNullOrWhiteSpace(command)) continue;
+                if (_configuration.globallyAllowedCommands.Contains(command)) continue;
+                _configuration.globallyAllowedCommands.Add(command);
+                processed++;
+            }
+
+            if (processed > 0)
+            {
+                SaveConfiguration();
+            }
+
+            arg.ReplyWith("[AdminRestrictions]: Added " + processed + " command(s) to the globally allowed list");
+        }
+
+        void RemoveGloballyAllowedCommand(ConsoleSystem.Arg arg)
+        {
+            if (!arg.HasArgs(1))
+            {
+                arg.ReplyWith("[AdminRestrictions]: Invalid syntax: adminrestrictions.removegloballyallowedcommand <command.name> [<command.name>...]");
+                return;
+            }
+
+            int processed = 0;
+            for (int i = 0; i < arg.Args.Length; i++)
+            {
+                var command = arg.Args[i];
+                if (string.IsNullOrWhiteSpace(command)) continue;
+                if (!_configuration.globallyAllowedCommands.Remove(command)) continue;
+                processed++;
+            }
+
+            if (processed > 0)
+            {
+                SaveConfiguration();
+            }
+
+            arg.ReplyWith("[AdminRestrictions]: Removed " + processed + " command(s) from the globally allowed list");
+        }
+
+        void AddGloballyBlockedCommand(ConsoleSystem.Arg arg)
+        {
+            if (!arg.HasArgs(1))
+            {
+                arg.ReplyWith("[AdminRestrictions]: Invalid syntax: adminrestrictions.addgloballyblockedcommand <command.name> [<command.name>...]");
+                return;
+            }
+
+            int processed = 0;
+            for (int i = 0; i < arg.Args.Length; i++)
+            {
+                var command = arg.Args[i];
+                if (string.IsNullOrWhiteSpace(command)) continue;
+                if (_configuration.globallyBlockedCommands.Contains(command)) continue;
+                _configuration.globallyAllowedCommands.Add(command);
+                processed++;
+            }
+
+            if (processed > 0)
+            {
+                SaveConfiguration();
+            }
+
+            arg.ReplyWith("[AdminRestrictions]: Added " + processed + " command(s) to the globally blocked list");
+        }
+
+        void RemoveGloballyBlockedCommand(ConsoleSystem.Arg arg)
+        {
+            if (!arg.HasArgs(1))
+            {
+                arg.ReplyWith("[AdminRestrictions]: Invalid syntax: adminrestrictions.removegloballyblockedcommand <command.name> [<command.name>...]");
+                return;
+            }
+
+            int processed = 0;
+            for (int i = 0; i < arg.Args.Length; i++)
+            {
+                var command = arg.Args[i];
+                if (string.IsNullOrWhiteSpace(command)) continue;
+                if (!_configuration.globallyBlockedCommands.Remove(command)) continue;
+                processed++;
+            }
+
+            if (processed > 0)
+            {
+                SaveConfiguration();
+            }
+
+            arg.ReplyWith("[AdminRestrictions]: Removed " + processed + " command(s) from the globally blocked list");
         }
 
         void AddAdminToGroupCommand(ConsoleSystem.Arg arg)
@@ -415,8 +561,11 @@ namespace AdminRestrictions
             return new GlobalConfig
             {
                 enabled = false,
-                globallyBlockedCommands = new string[]
+                globallyBlockedCommands = new List<string>
                 {
+                    "server.stop",
+                    "spawn.fill_populations",
+                    "spawn.fill_groups",
                     "global.quit",
                     "global.restart",
                     "demo.record",
@@ -425,15 +574,47 @@ namespace AdminRestrictions
                     "demo.splitseconds",
                     "demo.stop"
                 },
-                logToFile = true,
+                globallyAllowedCommands = new List<string>
+                {
+                    "global.teleport2player",
+                    "global.teleport2owneditem",
+                    "global.teleport2marker",
+                    "global.teleportlos",
+                    "global.teleportpos",
+                    "global.spectate",
+                    "global.teaminfo",
+                    "server.snapshot",
+                    "server.combatlog",
+                    "server.combatlog_outgoing",
+                    "global.god",
+                    "global.sleep"
+                },
+                logToFile = false,
                 groupConfigs = new GroupConfig[]
                 {
                     new GroupConfig
                     {
-                        name = "demo-group-1",
+                        name = "allow-all",
+                        allowAll = true,
+                        allowedCommands = new string[0],
+                        steamIds = new List<ulong>
+                        {
+                            1234567890
+                        }
+                    },
+                    new GroupConfig
+                    {
+                        name = "admins",
                         allowAll = false,
                         allowedCommands = new string[]
                         {
+                            "global.teleport2me",
+                            "entity.spawn",
+                            "inventory.give",
+                            "inventory.giveall",
+                            "inventory.givearm",
+                            "inventory.giveid",
+                            "inventory.giveto",
                             "global.entid"
                         },
                         steamIds = new List<ulong>

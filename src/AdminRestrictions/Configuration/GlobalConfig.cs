@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace AdminRestrictions.Configuration
 {
@@ -8,10 +9,10 @@ namespace AdminRestrictions.Configuration
         public bool enabled = false;
 
         [JsonProperty(PropertyName = "Globally Blocked Commands")]
-        public string[] globallyBlockedCommands;
+        public List<string> globallyBlockedCommands;
 
         [JsonProperty(PropertyName = "Globally Allowed Commands")]
-        public string[] globallyAllowedCommands;
+        public List<string> globallyAllowedCommands;
 
         [JsonProperty(PropertyName = "Log to file")]
         public bool logToFile = true;
@@ -21,8 +22,8 @@ namespace AdminRestrictions.Configuration
 
         public GlobalConfig()
         {
-            globallyBlockedCommands = globallyBlockedCommands ?? new string[0];
-            globallyAllowedCommands = globallyAllowedCommands ?? new string[0];
+            globallyBlockedCommands = globallyBlockedCommands ?? new List<string>();
+            globallyAllowedCommands = globallyAllowedCommands ?? new List<string>();
             groupConfigs = groupConfigs ?? new GroupConfig[0];
         }
     }
