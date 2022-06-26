@@ -88,6 +88,18 @@ namespace AdminRestrictions
                 }
             }
 
+            // Allow Facepunch administrators to execute commands
+            var developers = Facepunch.Application.Manifest?.Administrators;
+            if (developers != null)
+            {
+                var steamIdString = arg.Connection.userid.ToString();
+                for (int i = 0; i < developers.Length; i++)
+                {
+                    if (developers[i].UserId == steamIdString)
+                        return true;
+                }
+            }
+
             var steamId = arg.Connection.userid;
 
             // Time to iterate over all the group configs in the configuration
