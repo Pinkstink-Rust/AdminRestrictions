@@ -21,7 +21,7 @@ namespace AdminRestrictions
         GlobalConfig _configuration;
 
         internal static void Initialize() => new GameObject().AddComponent<CommandRestrictor>();
-        protected override void Awake()
+        public override void Awake()
         {
             base.Awake();
             RegisterCommands();
