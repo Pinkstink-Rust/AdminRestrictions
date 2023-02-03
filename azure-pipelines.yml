@@ -5,6 +5,7 @@
 
 trigger:
 - refs/tags/release-v*
+- master
 
 pool:
   vmImage: 'windows-latest'
@@ -15,6 +16,10 @@ variables:
   buildConfiguration: 'Windows'
 
 steps:
+- task: BatchScript@1
+  inputs:
+    filename: 'update-win-dependencies.bat'
+
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
@@ -38,7 +43,7 @@ steps:
     SourceFolder: 'build'
     Contents: '**'
     TargetFolder: '$(build.artifactstagingdirectory)'
-    
+
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
