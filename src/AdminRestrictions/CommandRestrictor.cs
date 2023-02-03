@@ -482,10 +482,10 @@ namespace AdminRestrictions
             {
                 return;
             }
-            Net.sv.write.Start();
-            Net.sv.write.PacketID(Message.Type.ConsoleMessage);
-            Net.sv.write.String(strCommand);
-            Net.sv.write.Send(new SendInfo(cn));
+            var write = Net.sv.StartWrite();
+            write.PacketID(Message.Type.ConsoleMessage);
+            write.String(strCommand);
+            write.Send(new SendInfo(cn));
         }
 
         bool ValidateConfiguration()

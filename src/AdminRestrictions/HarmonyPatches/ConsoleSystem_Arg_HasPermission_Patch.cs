@@ -87,9 +87,10 @@ namespace AdminRestrictions.HarmonyPatches
                 .GetMethod(nameof(CommandRestrictor.CommandHasPermission), BindingFlags.Instance | BindingFlags.NonPublic);
 
             var retInstructions = new List<CodeInstruction>(originalCodeInstructions);
+            var labels = new List<Label>(retInstructions[injectionIndex + 3].labels);
             retInstructions.RemoveAt(injectionIndex + 3);
             retInstructions.InsertRange(injectionIndex + 3, new CodeInstruction[] {
-                new CodeInstruction(OpCodes.Ldsfld, fieldInfo),
+                new CodeInstruction(OpCodes.Ldsfld, fieldInfo) { labels = labels },
                 new CodeInstruction(OpCodes.Ldarg_0),
                 new CodeInstruction(OpCodes.Call, methodInfo)
             });
