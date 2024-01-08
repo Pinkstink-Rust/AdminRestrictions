@@ -25,8 +25,8 @@ if ($steam_depot) { $steam_depot = "-depot $steam_depot" }
 $root_dir = $PSScriptRoot
 $temp_dir = Join-Path $root_dir "../temp"
 $tools_dir = Join-Path $temp_dir "tools"
-if ($null -eq $deps_dir) {
-    $deps_dir = Join-Path $temp_dir "raw-deps"
+if ([string]::IsNullOrEmpty($deps_dir)) {
+    $deps_dir = Join-Path $temp_dir "deps"
 }
 else {
     $deps_dir = Join-Path $PSScriptRoot $deps_dir
@@ -40,7 +40,7 @@ if (!(Test-Path $tools_dir)) {
 }
 
 # Set URLs of dependencies and tools to download
-$steam_depotdl_url = "https://github.com/SteamRE/DepotDownloader/releases/download/DepotDownloader_2.4.6/depotdownloader-2.4.6.zip"
+$steam_depotdl_url = "https://github.com/SteamRE/DepotDownloader/releases/download/DepotDownloader_2.5.0/depotdownloader-2.5.0.zip"
 
 function Get-Downloader {
     # Check if DepotDownloader is already downloaded
@@ -81,7 +81,7 @@ function Get-Downloader {
 
 function Get-Dependencies {
     # Cleanup existing game files, else they are not always the latest
-    # Remove-Item $managed_dir -Recurse -Force
+    Remove-Item $platform_dir -Recurse -Force
     $fileListPath = Join-Path $tools_dir "filelist" 
     Set-Content -Path $fileListPath -Value "regex:RustDedicated_Data/Managed/.+\.dll"
 
