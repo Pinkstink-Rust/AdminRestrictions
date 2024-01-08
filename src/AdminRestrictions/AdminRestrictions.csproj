@@ -15,7 +15,7 @@
 		<GamePlatform Condition=" '$(Configuration)' == 'Windows' ">windows</GamePlatform>
 		<GamePlatform Condition=" '$(GamePlatform)' == '' ">linux</GamePlatform>
 
-		<AssemblySearchPaths>..\..\deps\$(GamePlatform);$(AssemblySearchPaths)</AssemblySearchPaths>
+		<AssemblySearchPaths>..\..\deps\$(GamePlatform)\RustDedicated_Data\Managed</AssemblySearchPaths>
 
 		<LangVersion>10</LangVersion>
 
