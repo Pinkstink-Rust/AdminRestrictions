@@ -62,7 +62,7 @@ namespace AdminRestrictions.HarmonyPatches
         {
             new CodeInstruction(OpCodes.Ldarg_0),
             new CodeInstruction(OpCodes.Call, typeof(ConsoleSystem.Arg).GetProperty(nameof(ConsoleSystem.Arg.IsAdmin), BindingFlags.Instance | BindingFlags.Public).GetGetMethod()),
-            new CodeInstruction(OpCodes.Brfalse),
+            new CodeInstruction(OpCodes.Brfalse_S),
             new CodeInstruction(OpCodes.Ldc_I4_1)
         };
 
